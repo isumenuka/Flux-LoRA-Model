@@ -3,7 +3,7 @@
 This repository provides the code and instructions to train a LoRA (Low-Rank Adaptation) model that applies the **"lucataco flux"** artistic style to *your* custom face images. 🖼️ By using a LoRA, we can efficiently fine-tune a pre-trained Stable Diffusion model to generate images that retain specific facial features while incorporating the desired artistic style. 🚀
 
 This project was inspired by the following:
-*   [Pretrained LoRA Model](https://huggingface.co/ezsumm/PradMaz) 🤗
+*   [Pretrained LoRA Model](https://huggingface.co/ezsumm) 🤗
 *   [lucataco flux-dev-lora](https://replicate.com/lucataco/flux-dev-lora) 💡
 
 ## ✨ Key Features
