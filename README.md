@@ -1,42 +1,26 @@
-# LoRA Training for the "lucataco flux" Aesthetic with Custom Faces
+# LoRA Training for "lucataco flux" Style with Custom Faces
 
-This repository contains the code and resources to train a LoRA model that captures the artistic style of "lucataco flux" and applies it to custom faces. This allows you to generate images with the desired aesthetic while preserving specific facial features.
+This repository provides the code and instructions to train a LoRA (Low-Rank Adaptation) model that applies the "lucataco flux" artistic style to your custom face images. By using a LoRA, we can efficiently fine-tune a pre-trained Stable Diffusion model to generate images that retain specific facial features while incorporating the desired artistic style.
 
-## Overview
+This project was inspired by the following:
+*   [Pretrained LoRA Model](https://huggingface.co/ezsumm/)
+*   [lucataco flux-dev-lora](https://replicate.com/lucataco/flux-dev-lora)
 
-This project utilizes:
+## Key Features
 
-*   **Hugging Face Transformers:**  For accessing pre-trained Stable Diffusion models and training LoRAs.
-*   **Diffusers:** Hugging Face's library for diffusion models, used for model loading and LoRA application.
-*   **Custom Face Dataset:** Allows the model to learn to apply the lucataco flux style to *your* specific faces.
-*   **LoRA (Low-Rank Adaptation):** An efficient fine-tuning technique that allows adapting the diffusion model to the desired style.
-*   **Python 3.8+**
+*   **"lucataco flux" Style:**  Trains a LoRA to capture the unique aesthetic of the "lucataco flux" style.
+*   **Custom Face Data:** Enables the model to learn and apply the style to your specific face images.
+*   **Hugging Face Transformers & Diffusers:** Utilizes powerful and accessible libraries for diffusion model training and inference.
+*   **Efficient LoRA Training:** Employs the low-rank adaptation technique for fast and resource-friendly fine-tuning.
 
-## Repository Structure
-Use code with caution.
-Markdown
-.
-├── data/
-│ └── custom_faces/ # Images of custom faces
-│ ├── face1.png
-│ ├── face2.jpg
-│ └── ...
-├── src/
-│ ├── train.py # Main training script
-│ ├── utils.py # Utility functions
-│ └── ...
-├── lora_output/ # Output LoRA model files
-├── images_output/ # Generated images using the trained LoRA
-├── requirements.txt # List of required Python packages
-└── README.md # This file
 
 ## Getting Started
 
 ### Prerequisites
 
-1.  **Python 3.8+:** Make sure you have Python 3.8 or a later version installed.
-2.  **CUDA-enabled GPU:** Training diffusion models requires a capable GPU.
-3.  **Git:** To clone this repository.
+*   **Python 3.8+:** Make sure you have Python 3.8 or a newer version installed.
+*   **CUDA-Enabled GPU:** A CUDA-enabled NVIDIA GPU is highly recommended for training.
+*   **Git:** You'll need Git to clone the repository.
 
 ### Installation
 
@@ -55,43 +39,44 @@ Markdown
     # venv\Scripts\activate   # On Windows
     ```
 
-3.  **Install the required packages:**
+3.  **Install the dependencies:**
 
     ```bash
     pip install -r requirements.txt
     ```
-    **NOTE:** `requirements.txt` should include `accelerate`, `diffusers`, `transformers` and other required packages.
 
-4.  **Organize custom face dataset:** Place the image files of your custom faces in the `data/custom_faces` directory.
+    *   **Note:** Make sure `requirements.txt` includes libraries like `accelerate`, `diffusers`, and `transformers`, as well as other needed dependencies.
 
-### Training the LoRA
+4.  **Organize your custom face data:**
+    *   Place your face images inside the `data/custom_faces` directory.
+    *   Supported image formats: `.png`, `.jpg`, `.jpeg`.
 
-1.  **Prepare the training data:**
-    *   Ensure your face images in `data/custom_faces` are correctly named (e.g., `face1.png`, `face2.jpg`, etc.).
-    *   Consider using a script to create caption files if needed.
+### Training the LoRA Model
+
+1.  **Prepare your data:** Ensure your face images are correctly located in `data/custom_faces/`.
 
 2.  **Run the training script:**
 
     ```bash
     python src/train.py
     ```
-  *  **Parameters:**  You might need to customize training script parameters to suit your needs. Parameters are included in `src/train.py` file, but some of them are:
-    * `--pretrained_model_name_or_path`: base diffusion model for training (e.g. stabilityai/stable-diffusion-2-1).
-    * `--image_folder`: Path to `data/custom_faces/`.
-    * `--output_dir`: Path for saving the trained Lora.
-    * `--train_batch_size`: Training batch size.
-    * `--learning_rate`: Learning rate for LoRA training.
-    * `--num_train_epochs`: Number of epochs to train.
-    * `--seed`: Random seed.
-    * `-- mixed_precision`: If your system supports it, it should be used (fp16 or bf16).
 
-    *   Check the script `src/train.py` for full usage and customization of parameters.
+    *   **Training Parameters:** You'll likely want to customize the training. The `src/train.py` script uses parameters that can be adjusted to suit your needs.  Commonly used parameters include:
+        *   `--pretrained_model_name_or_path`: Base Stable Diffusion model (e.g., `stabilityai/stable-diffusion-2-1`).
+        *   `--image_folder`: Path to your face images (`data/custom_faces/`).
+        *   `--output_dir`:  Directory to save the trained LoRA (e.g., `lora_output/`).
+        *   `--train_batch_size`:  Batch size during training.
+        *   `--learning_rate`:  The learning rate for the LoRA fine-tuning.
+        *   `--num_train_epochs`: Number of training epochs.
+        *   `--seed`: A random seed for reproducibility.
+        *   `--mixed_precision`:  Use `fp16` or `bf16` if your system supports it.
+    *   **Check `src/train.py` for the full list and how to change them.**
 
 ### Using the Trained LoRA
 
-Once the training is complete, your LoRA model will be saved in the `lora_output` directory. You can then load it using diffusers and apply it to Stable Diffusion pipelines to generate images.
+Once training is done, the LoRA model will be saved in the `lora_output` directory.
 
-1.  **Example usage with Diffusers:**
+1.  **Example Usage:**
 
     ```python
     from diffusers import DiffusionPipeline, StableDiffusionPipeline
@@ -106,40 +91,34 @@ Once the training is complete, your LoRA model will be saved in the `lora_output
     pipe.load_lora_weights(lora_path)
 
     # Generate an image
-    prompt = "A portrait of a face in the lucataco flux style"  # Adjust prompt as needed. Add training trigger word if you have one.
-    image = pipe(prompt, guidance_scale=7.5).images[0]  # Optional parameters.
-    image.save("images_output/generated_image.png")  # Replace with the desired output path
+    prompt = "A portrait of a face in the lucataco flux style"  # Adjust prompt, and add a trigger word if you used one
+    image = pipe(prompt, guidance_scale=7.5).images[0]  # Options you can customize
+    image.save("images_output/generated_image.png")
     ```
-    
-2.  **Parameters:**  You can play around with `guidance_scale` and `num_inference_steps` for generating different results.
 
-## Customization
+2.  **Customize Generation:** You can adjust `guidance_scale`, `num_inference_steps` in the `pipe()` function to tweak the results.
 
-*   **Dataset:**  Feel free to modify the data loading logic in `src/train.py` to suit your specific data format.
-*   **Training Parameters:** Adjust training parameters in `src/train.py` (like learning rate, batch size, etc.) to experiment with the result.
-*   **Base Model:** You can change the base Stable Diffusion model using the `--pretrained_model_name_or_path` parameter.
-*   **Prompt Engineering:** Experiment with different prompts to generate images with the right content and style.
-*   **More Complex Usage:**  Add a training trigger word for the LoRA if needed, and use it in your prompt.
+## Customization Options
+
+*   **Data Loading:** Adapt the `src/train.py` data loading logic for special image formats or more complex data setups.
+*   **Training Configuration:**  Experiment with hyperparameters within the `src/train.py` script to achieve the desired outcome.
+*   **Base Model:** You can specify a different pre-trained Stable Diffusion model by changing `--pretrained_model_name_or_path` in the training script.
+*   **Prompt Engineering:** You can get creative with your prompts during image generation and include a custom trigger word if you trained the Lora using one.
 
 ## Project Goals
 
-*   **Learn LoRA Training:** Understand the process of training LoRAs using Hugging Face Transformers.
-*   **Style Transfer:** Achieve style transfer from the "lucataco flux" aesthetic onto custom faces.
-*   **Facial Preservation:** Generate images that retain the facial characteristics of your specific dataset.
-*   **Share the Process:** Share the process of training LoRAs and custom datasets, enabling other enthusiasts to replicate your results.
+*   Provide a method for transferring the "lucataco flux" style onto custom face images.
+*   Make LoRA training accessible using Hugging Face libraries.
+*   Offer a clear and easy-to-follow guide for training your own LoRA.
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit pull requests or open issues for bug reports or feature requests.
+Contributions are welcome! If you find any issues or have ideas for improvements, feel free to open an issue or submit a pull request.
 
 ## License
 
-[Specify your license here (e.g., MIT License, Apache License 2.0)]
+[Specify your license here. Example: MIT License]
 
 ## Contact
 
 [Your contact information or email address]
-
----
-
-This README.md provides a solid starting point for your project. Be sure to adapt it to your specific needs and add details where necessary. Good luck!
